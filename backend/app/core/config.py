@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=(".env", "../.env", "backend/.env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -27,6 +27,16 @@ class Settings(BaseSettings):
     # Agent
     agent_enabled: bool = True
     agent_monitor_interval_seconds: int = 30
+
+    @property
+    def normalized_database_url(self) -> str:
+        """Ensure SQLite uses aiosqlite for async SQLAlchemy."""
+        url = self.database_url.strip()
+        if url.startswith("sqlite:///") and not url.startswith("sqlite+aiosqlite:///"):
+            return url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+        if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
 
     @property
     def has_gemini_key(self) -> bool:

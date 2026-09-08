@@ -9,7 +9,7 @@ class OrderItemSchema(BaseModel):
     menuItemName: str
     quantity: int
     unitPrice: float
-    total: float
+    total: Optional[float] = None
 
     model_config = {"from_attributes": True}
 
@@ -36,3 +36,8 @@ class CreateOrderRequest(BaseModel):
 
 class UpdateOrderStatusRequest(BaseModel):
     status: str
+
+
+# Aliases for compatibility
+OrderCreateRequest = CreateOrderRequest
+OrderStatusUpdateRequest = UpdateOrderStatusRequest

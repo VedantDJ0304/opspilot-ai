@@ -23,13 +23,15 @@ settings = get_settings()
 _connect_args: dict = {}
 _pool_kwargs: dict = {}
 
-if "sqlite" in settings.database_url:
+db_url = settings.normalized_database_url
+
+if "sqlite" in db_url:
     # SQLite requires check_same_thread=False and StaticPool for async usage
     _connect_args = {"check_same_thread": False}
     _pool_kwargs = {"poolclass": StaticPool}
 
 engine = create_async_engine(
-    settings.database_url,
+    db_url,
     echo=False,
     connect_args=_connect_args,
     **_pool_kwargs,

@@ -6,7 +6,7 @@ from app.models.ingredient import Ingredient  # noqa: F401
 from app.models.inventory import InventoryItem, InventoryTransaction  # noqa: F401
 from app.models.menu import MenuItem, RecipeIngredient  # noqa: F401
 from app.models.order import Order, OrderItem  # noqa: F401
-from app.models.agent import AgentEvent, AgentDecision  # noqa: F401
+from app.models.agent import AgentEvent, AgentDecision, AgentRun, AgentMemory  # noqa: F401
 from app.models.risk import OperationalRisk  # noqa: F401
 from app.models.notification import AppNotification  # noqa: F401
 from app.models.settings import AgentSettings  # noqa: F401

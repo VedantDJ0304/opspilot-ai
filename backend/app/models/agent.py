@@ -1,7 +1,7 @@
-"""Agent event and decision models."""
+"""Agent event, decision, run, and memory models."""
 
 import json
-from sqlalchemy import Text
+from sqlalchemy import Text, String, Float, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 
@@ -45,3 +45,36 @@ class AgentDecision(Base):
     action_params_json: Mapped[str] = mapped_column(Text, default="{}")
     result: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[str] = mapped_column(default="Monitoring")  # Monitoring|Resolved|Executed
+
+
+class AgentRun(Base):
+    __tablename__ = "agent_run"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    timestamp: Mapped[str]
+    trigger: Mapped[str] = mapped_column(Text)
+    goal: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(default="COMPLETED")
+    confidence: Mapped[float] = mapped_column(Float, default=0.92)
+    active_risks_count: Mapped[int] = mapped_column(Integer, default=0)
+    action_taken: Mapped[str] = mapped_column(default="CONTINUE_MONITORING")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0)
+    summary: Mapped[str] = mapped_column(Text, default="")
+
+
+class AgentMemory(Base):
+    __tablename__ = "agent_memory"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    key: Mapped[str] = mapped_column(String(150), index=True)
+    memory_type: Mapped[str] = mapped_column(String(50), default="operational_context")
+    content_json: Mapped[str] = mapped_column(Text, default="{}")
+    timestamp: Mapped[str]
+
+    def get_content(self) -> dict:
+        if self.content_json:
+            return json.loads(self.content_json)
+        return {}
+
+    def set_content(self, data: dict) -> None:
+        self.content_json = json.dumps(data)
